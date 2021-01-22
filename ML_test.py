@@ -1,14 +1,14 @@
 import tensorflow as tf
 from tensorflow import keras
 from keras.models import Sequential
-from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Dropout
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Dropout, Activation
 from tensorflow.keras import layers
-from keras.utils import to_categorical
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 import cv2
 import random
+import pickle
 
 # Loading the data
 data = "F:\\Nextcloud\\assignments\\Odense Tekniske Gymnasium assignments\\OTG 3.C\\Programmering\\git\\Machine_Learning_test\\ML-Test-\\images\\dataset\\training_set"
@@ -26,8 +26,9 @@ for category in categories:
 
 img_size = 100
 new_array = cv2.resize(img_array, (img_size, img_size))
-plt.imshow(new_array, cmap = "gray")
-plt.show()
+#plt.imshow(new_array, cmap = "gray")
+#plt.show()
+#print(new_array)
 
 training_data = []
 
@@ -43,17 +44,52 @@ def train_data():
             except Exception as e:
                 pass
 
-#create_training_data()
+train_data()
+print("The length of data", len(training_data))
 
 random.shuffle(training_data)
-for sample in training_data[:10]:
-    print(sample[1])
+# for sample in training_data[:10]:
+#     print(sample[1])
 
 X = []
-Y = []
+y = []
 
 for features, label in training_data:
     X.append(features)
-    Y.append(label)
+    y.append(label)
 
 X = np.array(X).reshape(-1, img_size, img_size, 1)
+y = np.array(y)
+
+pickle_out = open("X.pickle","wb")
+pickle.dump(X, pickle_out)
+pickle_out.close()
+
+pickle_out = open("y.pickle","wb")
+pickle.dump(y, pickle_out)
+pickle_out.close()
+
+pickle_in = open("X.pickle", "rb")
+X = pickle.load(open("X.pickle","rb"))
+y = pickle.load(open("y.pickle","rb"))
+
+X = X/255.0
+
+model = Sequential()
+model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
+model.add(Activation("relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
+
+model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
+model.add(Activation("relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
+
+model.add(Flatten())
+model.add(Dense(64))
+
+model.add(Dense(1))
+model.add(Activation("sigmoid"))
+
+model.compile(loss="binary_crossentropy", optimizer="adam",metrics=["accuracy"])
+
+model.fit(X, y, batch_size=32, epochs=3, validation_split=0.1)
