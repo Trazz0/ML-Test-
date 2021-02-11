@@ -25,11 +25,6 @@ for category in categories:
 
 
 img_size = 100
-new_array = cv2.resize(img_array, (img_size, img_size))
-# plt.imshow(new_array, cmap = "gray")
-# plt.show()
-#print(new_array)
-
 training_data = []
 
 def train_data():
@@ -45,7 +40,7 @@ def train_data():
                 pass
 
 train_data()
-print("The length of data", len(training_data))
+# print("The length of data", len(training_data))
 
 random.shuffle(training_data)
 # for sample in training_data[:10]:
@@ -75,21 +70,23 @@ y = pickle.load(open("y.pickle","rb"))
 
 X = X/255.0
 
-# model = Sequential()
-# model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
-# model.add(Activation("relu"))
-# model.add(MaxPooling2D(pool_size=(2,2)))
+model = Sequential()
+model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
+model.add(Activation("relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
 
-# model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
-# model.add(Activation("relu"))
-# model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
+model.add(Activation("relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
 
-# model.add(Flatten())
-# model.add(Dense(64))
+model.add(Flatten())
+model.add(Dense(64))
 
-# model.add(Dense(1))
-# model.add(Activation("sigmoid"))
+model.add(Dense(1))
+model.add(Activation("sigmoid"))
 
-# model.compile(loss="binary_crossentropy", optimizer="adam",metrics=["accuracy"])
+model.compile(loss="binary_crossentropy", optimizer="adam",metrics=["accuracy"])
 
-# model.fit(X, y, batch_size=32, epochs=3, validation_split=0.1)
+model.fit(X, y, batch_size=32, epochs=3, validation_split=0.1)
+
+model.save("dog-cat-ML.model")
