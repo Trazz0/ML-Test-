@@ -11,7 +11,7 @@ import random
 import pickle
 
 # Loading the data
-data = "F:\\Nextcloud\\assignments\\Odense Tekniske Gymnasium assignments\\OTG 3.C\\Programmering\\git\\Machine_Learning_test\\ML-Test-\\images\\dataset\\training_set"
+data = "\\ML-Test-\\images\\dataset\\training_set"
 categories = ["dogs", "cats"]
 
 for category in categories:
@@ -40,11 +40,10 @@ def train_data():
                 pass
 
 train_data()
-# print("The length of data", len(training_data))
 
+
+# Shuffles the data in a random order
 random.shuffle(training_data)
-# for sample in training_data[:10]:
-#     print(sample[1])
 
 X = []
 y = []
@@ -70,6 +69,7 @@ y = pickle.load(open("y.pickle","rb"))
 
 X = X/255.0
 
+# The model
 model = Sequential()
 model.add(Conv2D(64, (3,3), input_shape = X.shape[1:]))
 model.add(Activation("relu"))
@@ -87,6 +87,6 @@ model.add(Activation("sigmoid"))
 
 model.compile(loss="binary_crossentropy", optimizer="adam",metrics=["accuracy"])
 
-model.fit(X, y, batch_size=32, epochs=3, validation_split=0.1)
+model.fit(X, y, batch_size=32, epochs=5, validation_split=0.1)
 
 model.save("dog-cat-ML.model")
